@@ -74,7 +74,7 @@ if __name__ == '__main__':
     for language in languages:
         page = 0
         sj_pages = 5
-        hh_pages = 5
+        hh_pages = 1
         average_salary = []
         vacancies_found = 0
         vacancies_processed = 0
