@@ -10,7 +10,6 @@ def get_predict_rub_salary_from_hh(language, vacancies_found, vacancies_processe
     url = 'https://api.hh.ru/vacancies'
     page = 0
     while page < hh_pages:
-
         params = {'page': page,"text": f"{language}", 'area': '1'}
         all_vacancies = get_all_vacancies(url, params)
         all_vacancies_programmers = all_vacancies['items']
@@ -27,7 +26,7 @@ def get_predict_rub_salary_from_hh(language, vacancies_found, vacancies_processe
                         average_salary.append(int(money))
                         vacancies_processed += 1
 
-        # hh_pages = all_vacancies['pages']                   
+        hh_pages = all_vacancies['pages']                   
         page += 1
     average_salary = get_average_salary_how_int(average_salary)
     predict_rub_salary_from_hh = language, vacancies_found, vacancies_processed, average_salary
@@ -37,7 +36,6 @@ def get_predict_rub_salary_from_hh(language, vacancies_found, vacancies_processe
 def get_predict_rub_salary_from_superjob(language, vacancies_found, vacancies_processed, average_salary, superjob_key, sj_pages, count=100):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     page = 0
-
     while page < sj_pages:
         headers = {'X-Api-App-Id': superjob_key}
         params = {'page': page, 'count': count, 'keyword': f'{language}', 't': '4', 'catalogues': '48'}
