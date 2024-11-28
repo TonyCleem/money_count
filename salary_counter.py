@@ -8,6 +8,7 @@ from all_vacancies import get_all_vacancies
 def predict_rub_salary_from_hh(language):
     url = 'https://api.hh.ru/vacancies'
     page = 0
+    pages = 1
     area = 1
     average_salary = 0
     vacancies_found = 0
@@ -30,12 +31,12 @@ def predict_rub_salary_from_hh(language):
                     average_salary += money
                     vacancies_processed += 1
 
-        # hh_pages = all_vacancies['pages']                   
+        pages = all_vacancies['pages']                   
         page += 1
     if average_salary:
         average_salary = average_salary / vacancies_processed
 
-    rub_salary_from_hh = language, vacancies_found, vacancies_processed, int(average_salary)
+    rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
     return rub_salary_from_hh
 
 
@@ -67,47 +68,46 @@ def predict_rub_salary_from_superjob(language):
                 vacancies_processed += 1
         page += 1
 
-        if average_salary:
+    if average_salary:
             average_salary = average_salary / vacancies_processed
 
-        rub_salary_from_sj = language, vacancies_found, vacancies_processed, int(average_salary)
+    rub_salary_from_sj = vacancies_found, vacancies_processed, int(average_salary)
         
-        return rub_salary_from_sj
+    return rub_salary_from_sj
 
  
 if __name__ == '__main__':
     load_dotenv()
     superjob_key = os.environ['SUPERJOB_KEY']
 
-    table_header = [
-    ('Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата')
-    ]
-
     languages = ['Python', 'C#', 'C++', 'Java', 'JS', '1С']
+
+    salaries_sj = []
+    salaries_hh = []
 
     for language in languages:
         sj_pages = 5
         hh_pages = 5
 
-        rub_salary_from_sj = [predict_rub_salary_from_superjob(language)]
+        rub_salary_from_sj = [f'{language}', *predict_rub_salary_from_superjob(language)]
+        salaries_sj.append(rub_salary_from_sj)
+
+        rub_salary_from_hh =  [f'{language}', *predict_rub_salary_from_hh(language)]
+        salaries_hh.append(rub_salary_from_hh)
+
+        table_salaies_hh = create_table_rub_salary(salaries_hh, 'HeadHunter Moscow')
+        table_salaies_sj = create_table_rub_salary(salaries_sj, 'SuperJob Moscow')
+
+    print(table_salaies_hh.table)
+    print()
+    print(table_salaies_sj.table)
+    print()
 
 
-        
+ 
 
+    
 
-    # print(salary_from_superjob)
-    # print(salary_from_hh)
-
-    # table_salaies_hh = create_table_rub_salary(salary_from_hh, 'HeadHunter Moscow')
-    # table_salaies_sj = create_table_rub_salary(salary_from_superjob, 'SuperJob Moscow')
-
-
-
-    # print(table_salaies_hh.table)
-    # print()
-
-    # print(table_salaies_sj.table)
-    # print()
 
 
 

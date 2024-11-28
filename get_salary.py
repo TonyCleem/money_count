@@ -1,0 +1,1 @@
+def predict_salary(salary_from, salary_to):
