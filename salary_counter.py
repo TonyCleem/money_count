@@ -95,8 +95,8 @@ if __name__ == '__main__':
             rub_salary_from_hh = [f'{language}', *rub_salary_from_hh]
             salaries_hh.append(rub_salary_from_hh)
 
-    table_salaies_hh = create_table_rub_salary(salaries_hh, 'HeadHunter Moscow')
-    table_salaies_sj = create_table_rub_salary(salaries_sj, 'SuperJob Moscow')
+    table_salaries_hh = create_table_rub_salary(salaries_hh, 'HeadHunter Moscow')
+    table_salaries_sj = create_table_rub_salary(salaries_sj, 'SuperJob Moscow')
 
     print(table_salaies_hh.table)
     print()
