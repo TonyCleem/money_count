@@ -156,5 +156,5 @@ cython_debug/
 
 
 # Other
-.idea/
+.idea
 .gitattributes.idea
