@@ -1,4 +1,5 @@
 import os
+import pprint
 from dotenv import load_dotenv
 from terminaltables import DoubleTable
 from create_table import create_table_rub_salary
@@ -11,7 +12,7 @@ def predict_rub_salary_from_hh(language):
     page = 0
     pages = 1
     area = 1
-    average_salary = 0
+    amount_salary = 0
     vacancies_found = 0
     vacancies_processed = 0
 
@@ -22,59 +23,61 @@ def predict_rub_salary_from_hh(language):
 
         for vacancy_programmer in all_vacancies_programmers:
             if not vacancy_programmer['salary']:
-                continue
-            vacancies_found += 1
+                continue 
             salaries = vacancy_programmer['salary']
             discovered_salary = get_salary(salaries['from'], salaries['to'])
             if not discovered_salary:
                 continue
-            average_salary += discovered_salary
+            amount_salary += discovered_salary
             vacancies_processed += 1
 
         pages = all_vacancies['pages']                   
         page += 1
 
-    if average_salary:
-        average_salary = average_salary / vacancies_processed
+    vacancies_found = all_vacancies['found']
+    
+    if amount_salary and vacancies_found:
+        average_salary = amount_salary / vacancies_processed
         rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
         return rub_salary_from_hh
-    return None
+    return vacancies_found
 
 
-def predict_rub_salary_from_superjob(language):
+def predict_rub_salary_from_superjob(language, superjob_key):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     page = 0
-    t = 4
+    town = 4
     count = 100
     catalogues = 48
-    average_salary = 0
+    amount_salary = 0
     vacancies_found = 0
     vacancies_processed = 0
     pages = 5
 
     while page < pages:
         headers = {'X-Api-App-Id': superjob_key}
-        params = {'page': page, 'count': count, 'keyword': f'{language}', 't': t, 'catalogues': catalogues}
-        all_vacansies = get_all_vacancies(url, params, headers)
-        all_vacancies_programmers = all_vacansies['objects']
+        params = {'page': page, 'count': count, 'keyword': f'{language}', 't': town, 'catalogues': catalogues}
+        all_vacancies = get_all_vacancies(url, params, headers)
+        all_vacancies_programmers = all_vacancies['objects']
 
         for vacancy_programmer in all_vacancies_programmers:
-            vacancies_found += 1
             discovered_salary = get_salary(vacancy_programmer['payment_from'], vacancy_programmer['payment_to'])
             if not discovered_salary:
                 continue
-            average_salary += discovered_salary
+            amount_salary += discovered_salary
             vacancies_processed += 1
         page += 1
 
-    if average_salary:
-        average_salary = average_salary / vacancies_processed
-        rub_salary_from_sj = vacancies_found, vacancies_processed, int(average_salary)
-        return rub_salary_from_sj
-    return None
+    vacancies_found = all_vacancies['total']
+    
+    if amount_salary and vacancies_found:
+        average_salary = amount_salary / vacancies_processed
+        rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
+        return rub_salary_from_hh
+    return vacancies_found
 
-        
-if __name__ == '__main__':
+ 
+def main():
     load_dotenv()
     superjob_key = os.environ['SUPERJOB_KEY']
 
@@ -84,33 +87,33 @@ if __name__ == '__main__':
     salaries_hh = []
 
     for language in languages:
-        rub_salary_from_sj = predict_rub_salary_from_superjob(language)
+        rub_salary_from_sj = predict_rub_salary_from_superjob(language, superjob_key)
         rub_salary_from_hh = predict_rub_salary_from_hh(language)
-        
-        if rub_salary_from_sj:
-            rub_salary_from_sj = [f'{language}', *rub_salary_from_sj]
-            salaries_sj.append(rub_salary_from_sj)
 
-        if rub_salary_from_hh:
-            rub_salary_from_hh = [f'{language}', *rub_salary_from_hh]
+        if (isinstance(rub_salary_from_sj, int)):
+            rub_salary_from_sj = [f'{language}', rub_salary_from_sj, None, None]
+            salaries_sj.append(rub_salary_from_sj)
+            continue
+
+        rub_salary_from_sj = [f'{language}', *rub_salary_from_sj]
+        salaries_sj.append(rub_salary_from_sj)
+
+        if (isinstance(rub_salary_from_hh, int)):
+            rub_salary_from_hh = [f'{language}', rub_salary_from_hh, None, None]
             salaries_hh.append(rub_salary_from_hh)
+            continue
+
+        rub_salary_from_hh = [f'{language}', *rub_salary_from_hh]
+        salaries_hh.append(rub_salary_from_hh)
 
     table_salaries_hh = create_table_rub_salary(salaries_hh, 'HeadHunter Moscow')
     table_salaries_sj = create_table_rub_salary(salaries_sj, 'SuperJob Moscow')
 
-    print(table_salaies_hh.table)
+    print(table_salaries_hh.table)
     print()
-    print(table_salaies_sj.table)
+    print(table_salaries_sj.table)
     print()
 
 
- 
-
-    
-
-
-
-
-
-    
-
+if __name__ == '__main__':
+    main()

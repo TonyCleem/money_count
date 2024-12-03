@@ -1,4 +1,4 @@
-def predict_salary(salary_from, salary_to):
+def get_salary(salary_from, salary_to):
 	if not salary_from and not salary_to:
 		return None
 	if salary_from and salary_to:
