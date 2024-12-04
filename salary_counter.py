@@ -13,6 +13,7 @@ def predict_rub_salary_from_hh(language):
     pages = 1
     area = 1
     amount_salary = 0
+    average_salary = 0
     vacancies_found = 0
     vacancies_processed = 0
 
@@ -38,9 +39,10 @@ def predict_rub_salary_from_hh(language):
     
     if amount_salary and vacancies_found:
         average_salary = amount_salary / vacancies_processed
-        rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
-        return rub_salary_from_hh
-    return vacancies_found
+
+    rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
+    return rub_salary_from_hh
+    
 
 
 def predict_rub_salary_from_superjob(language, superjob_key):
@@ -50,6 +52,7 @@ def predict_rub_salary_from_superjob(language, superjob_key):
     count = 100
     catalogues = 48
     amount_salary = 0
+    average_salary = 0
     vacancies_found = 0
     vacancies_processed = 0
     pages = 5
@@ -72,9 +75,10 @@ def predict_rub_salary_from_superjob(language, superjob_key):
     
     if amount_salary and vacancies_found:
         average_salary = amount_salary / vacancies_processed
-        rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
-        return rub_salary_from_hh
-    return vacancies_found
+
+    rub_salary_from_hh = vacancies_found, vacancies_processed, int(average_salary)
+    return rub_salary_from_hh
+    
 
  
 def main():
@@ -90,18 +94,8 @@ def main():
         rub_salary_from_sj = predict_rub_salary_from_superjob(language, superjob_key)
         rub_salary_from_hh = predict_rub_salary_from_hh(language)
 
-        if (isinstance(rub_salary_from_sj, int)):
-            rub_salary_from_sj = [f'{language}', rub_salary_from_sj, None, None]
-            salaries_sj.append(rub_salary_from_sj)
-            continue
-
         rub_salary_from_sj = [f'{language}', *rub_salary_from_sj]
         salaries_sj.append(rub_salary_from_sj)
-
-        if (isinstance(rub_salary_from_hh, int)):
-            rub_salary_from_hh = [f'{language}', rub_salary_from_hh, None, None]
-            salaries_hh.append(rub_salary_from_hh)
-            continue
 
         rub_salary_from_hh = [f'{language}', *rub_salary_from_hh]
         salaries_hh.append(rub_salary_from_hh)
